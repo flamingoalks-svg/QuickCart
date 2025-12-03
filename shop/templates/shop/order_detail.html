@@ -1,0 +1,81 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Заказ #{{ order.id }} - QuickCart{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Заказ #{{ order.id }}</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Информация о заказе</h5>
+                <p><strong>Дата:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>Статус:</strong> 
+                    {% if order.status == 'created' %}
+                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'in_assembly' %}
+                        <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'ready' %}
+                        <span class="badge bg-info">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'delivered' %}
+                        <span class="badge bg-success">{{ order.get_status_display }}</span>
+                    {% else %}
+                        <span class="badge bg-primary">{{ order.get_status_display }}</span>
+                    {% endif %}
+                </p>
+                <p><strong>Итоговая сумма:</strong> <span class="text-primary fs-4">{{ order.total_amount }} ₽</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="mb-3">Состав заказа</h3>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Фото</th>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 80px; height: 80px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="bi bi-image text-white"></i>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.name }}</a>
+                </td>
+                <td>{{ item.price }} ₽</td>
+                <td>{{ item.quantity }}</td>
+                <td><strong>{{ item.get_subtotal }} ₽</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end"><strong>Итого:</strong></td>
+                <td><strong class="text-primary">{{ order.total_amount }} ₽</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'shop:order_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Вернуться к списку заказов
+    </a>
+</div>
+{% endblock %}
+

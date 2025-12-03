@@ -1,0 +1,66 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Оформление заказа - QuickCart{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Оформление заказа</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>Состав заказа</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Фото</th>
+                        <th>Товар</th>
+                        <th>Цена</th>
+                        <th>Количество</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% endif %}
+                        </td>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.price }} ₽</td>
+                        <td>{{ item.quantity }}</td>
+                        <td><strong>{{ item.get_subtotal }} ₽</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end"><strong>Итого:</strong></td>
+                        <td><strong class="text-primary">{{ total }} ₽</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Итоговая сумма</h5>
+                <h3 class="text-primary">{{ total }} ₽</h3>
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        Подтвердить заказ
+                    </button>
+                </form>
+                <a href="{% url 'shop:cart' %}" class="btn btn-outline-secondary w-100 mt-2">
+                    <i class="bi bi-arrow-left"></i> Вернуться в корзину
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

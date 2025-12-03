@@ -1,0 +1,43 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ product.name }} - QuickCart{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+        {% else %}
+        <div class="bg-secondary d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+            <i class="bi bi-image text-white" style="font-size: 5rem;"></i>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h1>{{ product.name }}</h1>
+        <p class="text-muted">{{ product.description }}</p>
+        <div class="mb-4">
+            <h2 class="text-primary">{{ product.price }} ₽</h2>
+        </div>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-lg">
+                Добавить в корзину
+            </button>
+        </form>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="bi bi-info-circle"></i> Для добавления товара в корзину необходимо 
+            <a href="{% url 'shop:login' %}">войти</a> или 
+            <a href="{% url 'shop:register' %}">зарегистрироваться</a>.
+        </div>
+        {% endif %}
+        <hr>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться в каталог
+        </a>
+    </div>
+</div>
+{% endblock %}
+

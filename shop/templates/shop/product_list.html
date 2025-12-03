@@ -1,0 +1,82 @@
+{% extends 'shop/base.html' %}
+
+{% block styles %}
+<style>
+    .product-card .card-title {
+        min-height: 3.5rem; /* Reserve space for ~2 lines of title text */
+    }
+</style>
+{% endblock %}
+
+{% block title %}Каталог товаров - QuickCart{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Каталог товаров</h1>
+
+<div class="row g-2">
+    {% for product in page_obj %}
+    <div class="col-md-4 col-lg-3 mb-4">
+        <div class="card product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+            {% else %}
+            <div class="card-img-top product-image bg-secondary d-flex align-items-center justify-content-center">
+                <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+            </div>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text text-muted flex-grow-1">
+                    {{ product.description|truncatewords:15 }}
+                </p>
+                <div class="mt-auto">
+                    <p class="card-text">
+                        <strong class="text-primary">{{ product.price }} ₽</strong>
+                    </p>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="btn btn-primary w-100">
+                        Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            Товары не найдены.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Навигация по страницам">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
