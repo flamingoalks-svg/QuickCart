@@ -75,5 +75,4 @@ python manage.py runserver
 
 8. Сайт доступен по адресу: http://127.0.0.1:8000/
 9. Админка доступна по адресу: http://127.0.0.1:8000/admin/
-- Email: admin@test.local
-- Пароль: pass
+ 
